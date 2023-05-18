@@ -1,5 +1,6 @@
 import { Role } from "./role";
 import { dbGetAllRoleIDs } from "../db/roleDBAccess";
+import { dbCheckOIBExists } from "../db/userDBAccess";
 
 export class User {
     userID: number;
@@ -16,29 +17,28 @@ export class UserDTO {
     oib: string;
     roleid: number;
 
-    static async validate(user: UserDTO) {
+    static async validate(user): Promise<[boolean, string[]]>{
         let isValid = true;
         let wrongAttributes: string[] = [];
 
-        //ID is a serial
-        if (user.username.length > 200 || /\d/.test(user.username) || /[^A-Za-z\s]/.test(user.username)) {
+        if (!user.username || user.username.length > 200 || /\d/.test(user.username) || /[^A-Za-z\s]/.test(user.username)) {
             isValid = false;
             wrongAttributes.push("username");
         }
     
-        if (user.usersurname.length > 200 || /\d/.test(user.usersurname) || /[^A-Za-z\s]/.test(user.usersurname)) {
+        if (!user.usersurname || user.usersurname.length > 200 || /\d/.test(user.usersurname) || /[^A-Za-z\s]/.test(user.usersurname)) {
             isValid = false;
             wrongAttributes.push("usersurname");
         }
     
-        if (user.oib !== null) {
-            if (user.oib.length !== 11 || !/^\d+$/.test(user.oib)) {
+        if (user.oib) {
+            if (user.oib.length !== 11 || !/^\d+$/.test(user.oib) || dbCheckOIBExists(user.oib) ) {
                 isValid = false;
                 wrongAttributes.push("oib");
             }
         }
     
-        if (!(await dbGetAllRoleIDs()).includes(user.roleid)) {
+        if (!user.roleid || !(await dbGetAllRoleIDs()).includes(user.roleid)) {
             isValid = false;
             wrongAttributes.push("roleid");
         }

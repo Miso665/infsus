@@ -20,21 +20,36 @@ export class ModelDTO {
     modelaccelinseconds: number;
     brandid: number;
 
-    static async validate(model: ModelDTO) {
+    static async validate(model): Promise<[boolean, string[]]> {
         let isValid = true;
         let wrongAttributes: string[] = [];
 
-        if (model.modelname.length > 200) {
+        if (!model.modelname || model.modelname.length > 200) {
             isValid = false;
             wrongAttributes.push("modelname");
         }
 
-        if (model.modeltransmissiontype !== "manual" && model.modeltransmissiontype !== "automatic") {
+        if (!model.modelhorsepower || model.modelhorsepower < 0) {
+            isValid = false;
+            wrongAttributes.push("modelhorsepower");
+        }
+
+        if (!model.modeltopspeed || model.modeltopspeed < 0) {
+            isValid = false;
+            wrongAttributes.push("modeltopspeed");
+        }
+
+        if (!model.modeltransmissiontype || model.modeltransmissiontype !== "manual" && model.modeltransmissiontype !== "automatic") {
             isValid = false;
             wrongAttributes.push("modeltransmissiontype");
         }
 
-        if (!(await dbGetAllBrandIDs()).includes(model.brandid)) {
+        if (!model.modelaccelinseconds || model.modelaccelinseconds < 0) {
+            isValid = false;
+            wrongAttributes.push("modelaccelinseconds");
+        }
+
+        if (!model.brandid || !(await dbGetAllBrandIDs()).includes(model.brandid)) {
             isValid = false;
             wrongAttributes.push("brandid");
         }

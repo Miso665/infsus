@@ -9,6 +9,25 @@ export async function dbGetAllCarStockIDs() {
     return IDs;
 }
 
+export async function dbInsertCarStock(carStock: CarStockDTO): Promise<CarStockDTO | null> {
+    const query =
+        "INSERT INTO CarStock (stockPrice, stockColor, stockRims, stockBought, modelID) VALUES ($1, $2, $3, $4, $5) RETURNING *;";
+
+    try {
+        const result: QueryResult<CarStockDTO> = await db.query(query, [
+            carStock.stockprice,
+            carStock.stockcolor,
+            carStock.stockrims,
+            carStock.stockbought,
+            carStock.modelid,
+        ]);
+        return result.rows[0];
+    } catch (error) {
+        console.error("Error inserting car stock:", error);
+        return null;
+    }
+}
+
 export async function dbGetCarStock(stockID: number): Promise<CarStockDTO | null> {
     const query = "SELECT * FROM CarStock WHERE stockID = $1;";
 
@@ -21,12 +40,12 @@ export async function dbGetCarStock(stockID: number): Promise<CarStockDTO | null
     }
 }
 
-export async function dbUpdateCarStock(carStock: CarStockDTO): Promise<boolean> {
+export async function dbUpdateCarStock(carStock: CarStockDTO): Promise<CarStockDTO> {
     const query =
-        "UPDATE CarStock SET stockPrice = $1, stockColor = $2, stockRims = $3, stockBought = $4, modelID = $5 WHERE stockID = $6;";
+        "UPDATE CarStock SET stockPrice = $1, stockColor = $2, stockRims = $3, stockBought = $4, modelID = $5 WHERE stockID = $6 RETURNING *;";
 
     try {
-        await db.query(query, [
+        const result: QueryResult<CarStockDTO> = await db.query(query, [
             carStock.stockprice,
             carStock.stockcolor,
             carStock.stockrims,
@@ -34,10 +53,10 @@ export async function dbUpdateCarStock(carStock: CarStockDTO): Promise<boolean> 
             carStock.modelid,
             carStock.stockid,
         ]);
-        return true;
+        return result.rows[0];
     } catch (error) {
         console.error("Error updating car stock:", error);
-        return false;
+        return null;
     }
 }
 
@@ -50,5 +69,16 @@ export async function dbDeleteCarStock(stockID: number): Promise<boolean> {
     } catch (error) {
         console.error("Error deleting car stock:", error);
         return false;
+    }
+}
+
+export async function dbGetAllCarStocks(): Promise<CarStockDTO[]> {
+    const query = "SELECT * FROM CarStock;";
+    try {
+        const result: QueryResult<CarStockDTO> = await db.query(query);
+        return result.rows;
+    } catch (error) {
+        console.error("Error getting all carstock:", error);
+        return [];
     }
 }

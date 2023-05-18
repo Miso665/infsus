@@ -18,26 +18,31 @@ export class CarStockDTO {
     stockbought: boolean;
     modelid: number;
 
-    static async validate(stock: CarStockDTO) {
+    static async validate(stock: CarStockDTO): Promise<[boolean, string[]]> {
         let isValid = true;
         let wrongAttributes: string[] = [];
 
-        if (stock.stockprice < 0) {
+        if (!stock.stockprice || stock.stockprice < 0) {
             isValid = false;
             wrongAttributes.push("stockprice");
         }
 
-        if (stock.stockcolor.length > 100) {
+        if (!stock.stockcolor || stock.stockcolor.length > 100) {
             isValid = false;
             wrongAttributes.push("stockcolor");
         }
 
-        if (stock.stockrims.length > 200) {
+        if (!stock.stockrims || stock.stockrims.length > 200) {
             isValid = false;
             wrongAttributes.push("stockrims");
         }
 
-        if (!(await dbGetAllModelIDs()).includes(stock.modelid)) {
+        if (!stock.stockbought && stock.stockbought != true && stock.stockbought != false) {
+            isValid = false;
+            wrongAttributes.push("stockbought");
+        }
+
+        if (!stock.modelid || !(await dbGetAllModelIDs()).includes(stock.modelid)) {
             isValid = false;
             wrongAttributes.push("modelid");
         }

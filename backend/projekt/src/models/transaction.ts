@@ -21,27 +21,32 @@ export class TransactionDTO {
     userid: number;
     stockid: number;
 
-    static async validate(transaction: TransactionDTO) {
+    static async validate(transaction): Promise<[boolean, string[]]> {
         let isValid = true;
         let wrongAttributes: string[] = [];
 
-        const validDate = new Date(transaction.transactiontime);
-        if (isNaN(validDate.getTime())) {
+        if (!transaction.transactiontime) {
             isValid = false;
             wrongAttributes.push("transactiontime");
+        } else {
+            const validDate = new Date(transaction.transactiontime);
+            if (isNaN(validDate.getTime())) {
+                isValid = false;
+                wrongAttributes.push("transactiontime");
+            }
         }
 
-        if (transaction.transactionvalue < 0) {
+        if (!transaction.transactionvalue || transaction.transactionvalue < 0) {
             isValid = false;
             wrongAttributes.push("transactionvalue");
         }
 
-        if (!(await dbGetAllUserIDs()).includes(transaction.userid)) {
+        if (!transaction.userid || !(await dbGetAllUserIDs()).includes(transaction.userid)) {
             isValid = false;
             wrongAttributes.push("userid");
         }
 
-        if (!(await dbGetAllCarStockIDs()).includes(transaction.stockid)) {
+        if (!transaction.stockid || !(await dbGetAllCarStockIDs()).includes(transaction.stockid)) {
             isValid = false;
             wrongAttributes.push("stockid");
         }

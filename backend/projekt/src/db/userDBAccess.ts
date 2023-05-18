@@ -10,18 +10,18 @@ export async function dbGetAllUserIDs() {
 }
 
 
-export async function dbInsertUser(user: UserDTO): Promise<number | null> {
+export async function dbInsertUser(user: UserDTO): Promise<UserDTO | null> {
     const query =
-        "INSERT INTO Users (userName, userSurname, OIB, roleID) VALUES ($1, $2, $3, $4) RETURNING userID;";
+        "INSERT INTO Users (userName, userSurname, OIB, roleID) VALUES ($1, $2, $3, $4) RETURNING *;";
 
     try {
-        const result: QueryResult<{ userid: number }> = await db.query(query, [
+        const result: QueryResult<UserDTO> = await db.query(query, [
             user.username,
             user.usersurname,
             user.oib,
             user.roleid,
         ]);
-        return result.rows[0].userid;
+        return result.rows[0];
     } catch (error) {
         console.error("Error inserting user:", error);
         return null;
@@ -40,16 +40,16 @@ export async function dbGetUser(userID: number): Promise<UserDTO | null> {
     }
 }
 
-export async function dbUpdateUser(user: UserDTO): Promise<boolean> {
+export async function dbUpdateUser(user: UserDTO): Promise<UserDTO> {
     const query =
-        "UPDATE Users SET userName = $1, userSurname = $2, OIB = $3, roleID = $4 WHERE userID = $5;";
+        "UPDATE Users SET userName = $1, userSurname = $2, OIB = $3, roleID = $4 WHERE userID = $5 RETURNING *;";
 
     try {
-        await db.query(query, [user.username, user.usersurname, user.oib, user.roleid, user.userid]);
-        return true;
+        const result: QueryResult<UserDTO> = await db.query(query, [user.username, user.usersurname, user.oib, user.roleid, user.userid]);
+        return result.rows[0];
     } catch (error) {
         console.error("Error updating user:", error);
-        return false;
+        return null;
     }
 }
 
@@ -61,6 +61,28 @@ export async function dbDeleteUser(userID: number): Promise<boolean> {
         return result.rowCount > 0;
     } catch (error) {
         console.error("Error deleting user:", error);
+        return false;
+    }
+}
+
+export async function dbGetAllUsers(): Promise<UserDTO[]> {
+    const query = "SELECT * FROM Users;";
+    try {
+        const result: QueryResult<UserDTO> = await db.query(query);
+        return result.rows;
+    } catch (error) {
+        console.error("Error getting all users:", error);
+        return [];
+    }
+}
+
+export async function dbCheckOIBExists(OIB: string): Promise<boolean> {
+    const query = "SELECT COUNT(*) FROM Users WHERE OIB = $1;";
+    try {
+        const result: QueryResult<{ count: number }> = await db.query(query, [OIB]);
+        return result.rows[0].count > 0;
+    } catch (error) {
+        console.error("Error checking OIB existence:", error);
         return false;
     }
 }
