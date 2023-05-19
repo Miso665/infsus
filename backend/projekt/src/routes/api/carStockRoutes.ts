@@ -9,6 +9,7 @@ import {
     dbDeleteCarStock,
     dbGetAllCarStocks,
 } from '../../db/carStockDBAccess';
+import { dbGetTestDrivesByStockID } from '../../db/testDriveDBAccess';
 
 const router = express.Router();
 
@@ -22,6 +23,17 @@ router.get('/:id(\\d+)', async (req, res) => {
     const carStock = await dbGetCarStock(id);
     if (carStock) {
         res.json(carStock);
+    } else {
+        res.sendStatus(404);
+    }
+});
+
+router.get('/:id(\\d+)/testdrives', async (req, res) => {
+    const id: number = Number(req.params.id);
+    const carStock = await dbGetCarStock(id);
+    const testDrives = await dbGetTestDrivesByStockID(id);
+    if (carStock) {
+        res.json(testDrives);
     } else {
         res.sendStatus(404);
     }

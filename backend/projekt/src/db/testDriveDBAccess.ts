@@ -68,6 +68,20 @@ export async function dbGetAllTestDrives(): Promise<TestDriveDTO[]> {
 }
 
 
+export async function dbGetTestDrivesByStockID(stockID: number): Promise<TestDriveDTO[]> {
+    const query = 'SELECT * FROM testdrives WHERE stockid = $1;';
+    const values = [stockID];
+
+    try {
+        const result: QueryResult<TestDriveDTO> = await db.query(query, values);
+        return result.rows;
+    } catch (error) {
+        console.error('Error retrieving test drives by stock ID:', error);
+        return [];
+    }
+}
+
+
 export async function concludeTestDriveConcluded(testDriveID: number): Promise<boolean> {
     const query = "UPDATE TestDrives SET testDriveConcluded = true WHERE testDriveID = $1;";
 
