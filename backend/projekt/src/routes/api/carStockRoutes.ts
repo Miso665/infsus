@@ -1,7 +1,7 @@
 import express from 'express';
 var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
-import { CarStockDTO } from '../../models/carStock';
+import { CarStock, CarStockDTO } from '../../models/carStock';
 import {
     dbInsertCarStock,
     dbGetCarStock,
@@ -10,6 +10,10 @@ import {
     dbGetAllCarStocks,
 } from '../../db/carStockDBAccess';
 import { dbGetTestDrivesByStockID } from '../../db/testDriveDBAccess';
+import { dbGetModel } from '../../db/modelDBAccess';
+import { dbGetBrand } from '../../db/brandDBAccess';
+import { Brand } from '../../models/brand';
+import { Model } from '../../models/model';
 
 const router = express.Router();
 
@@ -34,6 +38,49 @@ router.get('/:id(\\d+)/testdrives', async (req, res) => {
     const testDrives = await dbGetTestDrivesByStockID(id);
     if (carStock) {
         res.json(testDrives);
+    } else {
+        res.sendStatus(404);
+    }
+});
+
+router.get('/deepaccess/:id(\\d+)', async (req, res) => {
+    const id: number = Number(req.params.id);
+    const carStock = await dbGetCarStock(id);
+
+    if (carStock) {
+        const modeID = carStock.modelid;
+        const model = await dbGetModel(modeID);
+        const brandID = model.brandid;
+        const brand = await dbGetBrand(brandID);
+
+        let brandInstance: Brand = {
+            brandID: brand.brandid,
+            brandName: brand.brandname,
+            brandContractStart: new Date(brand.brandcontractstart),
+            brandContractEnd: new Date(brand.brandcontractend)
+        };
+
+        let modelInstance: Model = {
+            modelID: model.modelid,
+            modelName: model.modelname,
+            modelHorsePower: model.modelhorsepower,
+            modelTopSpeed: model.modeltopspeed,
+            modelTransmissionType: model.modeltransmissiontype,
+            modelAccelInSeconds: model.modelaccelinseconds,
+            brand: brandInstance
+        }
+
+        let carStockInstance: CarStock = {
+            stockID: carStock.stockid,
+            stockPrice: carStock.stockprice,
+            stockColor: carStock.stockcolor,
+            stockRims: carStock.stockrims,
+            stockBought: carStock.stockbought,
+            model: modelInstance
+        }
+
+
+        res.json(carStockInstance);
     } else {
         res.sendStatus(404);
     }
