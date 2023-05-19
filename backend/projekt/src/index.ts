@@ -11,8 +11,7 @@ import { BrandDTO } from './models/brand';
 import { dbGetAllModels } from './db/modelDBAccess';
 
 
-app.use(cors({origin: 'http://127.0.0.1:3000'}));
-
+app.use(cors());
 import apiRoutes from "./routes/api/apiRoutes";
 app.use("/api", apiRoutes);
 

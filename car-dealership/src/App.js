@@ -10,6 +10,13 @@ import CarsList from './pages/cars/CarsList';
 import SingleCar from './pages/cars/SingleCar';
 import AddCar from './pages/cars/AddCar';
 import CarStock from './pages/cars/CarStock';
+import StockList from './pages/cars/StockList';
+import AddStock from './pages/cars/AddStock';
+import AddTestDrive from './pages/testdrives/AddTestDrive';
+import TestDrive from './pages/testdrives/TestDrive';
+import AddUser from './pages/users/AddUser';
+import User from './pages/users/User';
+import UsersList from './pages/users/UsersList';
 
 
 function App() {
@@ -23,6 +30,13 @@ function App() {
         <Route exact path="/cars/:carId" element={<SingleCar />}></Route>
         <Route exact path="/cars/new" element={<AddCar />}></Route>
         <Route exact path="/stock/:stockId" element={<CarStock />}></Route>
+        <Route exact path="/stock" element={<StockList />}></Route>
+        <Route exact path="/stock/new" element={<AddStock />}></Route>
+        <Route exact path="/testdrive/new" element={<AddTestDrive />}></Route>
+        <Route exact path="/testdrive/:testDriveId" element={<TestDrive />}></Route>
+        <Route exact path="/user/new" element={<AddUser />}></Route>
+        <Route exact path="/user/:userId" element={<User />}></Route>
+        <Route exact path="/users" element={<UsersList />}></Route>
       </Routes>
     </BrowserRouter>
   );

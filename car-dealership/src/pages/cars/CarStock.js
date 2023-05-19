@@ -19,7 +19,7 @@ function CarStock() {
 
     const getStockData = async () => {
         try {
-            const response = await fetch("http://localhost:5000/stock/" + stockId,
+            const response = await fetch("http://localhost:8080/api/carstocks/" + stockId,
                 {
                     method: "GET",
                     mode: "cors",
@@ -73,8 +73,27 @@ function CarStock() {
             console.log(e)
         }
     }
+
+    const getTestDriveData = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/carstocks/" + stockId + "/testdrives",
+                {
+                    method: "GET",
+                    mode: "cors",
+                    headers: {
+                        "Content-type": "application/json"
+                    }
+                });
+            let jsonData = await response.json();
+            setTestDrives(jsonData)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     useEffect(() => {
         getStockData();
+        getTestDriveData()
     }, []);
     const onChange = e => {
         setCarStock({ ...carStock, [e.target.name]: e.target.value })

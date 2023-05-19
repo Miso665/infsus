@@ -7,18 +7,18 @@ import Button from "react-bootstrap/Button";
 
 function AddCar() {
     const [car, setCar] = useState({
-        modelName: null,
-        modelHorsePower: null,
-        modelTopSpeed: null,
-        modelAccelInSeconds: null,
-        modelTransmissionType: null
+        modelname: null,
+        modelhorsepower: null,
+        modeltopspeed: null,
+        modelaccelinseconds: null,
+        modeltransmissiontype: null
     })
 
     let makers = ["Audi", "Porsche", "Bagatiti"]
 
     const addNewCar = async () => {
         try {
-            const response = await fetch("http://localhost:5000/cars/add",
+            const response = await fetch("http://localhost:8080/api/models/",
                 {
                     method: "POST",
                     mode: "cors",
@@ -78,11 +78,11 @@ function AddCar() {
                 <InputGroup.Text id="basic-addon1">Model</InputGroup.Text>
                 <Form.Control
                     placeholder="Model"
-                    aria-label="modelName"
-                    name="modelName"
+                    aria-label="modelname"
+                    name="modelname"
                     aria-describedby="basic-addon1"
                     onChange={e => onChange(e)}
-                    value={car.modelName}
+                    value={car.modelname}
                 />
             </InputGroup>
 
@@ -90,44 +90,44 @@ function AddCar() {
                 <InputGroup.Text id="basic-addon1">Snaga u KS</InputGroup.Text>
                 <Form.Control
                     placeholder="Proizvođač"
-                    aria-label="modelHorsePower"
-                    name="modelHorsePower"
+                    aria-label="modelhorsepower"
+                    name="modelhorsepower"
                     aria-describedby="basic-addon1"
                     onChange={e => onChange(e)}
-                    value={car.modelHorsePower}
+                    value={car.modelhorsepower}
                 />
             </InputGroup>
             <InputGroup className="mb-3">
                 <InputGroup.Text id="basic-addon1">Maksimalna brzina</InputGroup.Text>
                 <Form.Control
                     placeholder="Maksimalna brzina"
-                    aria-label="modelTopSpeed"
-                    name="modelTopSpeed"
+                    aria-label="modeltopspeed"
+                    name="modeltopspeed"
                     aria-describedby="basic-addon1"
                     onChange={e => onChange(e)}
-                    value={car.modelTopSpeed}
+                    value={car.modeltopspeed}
                 />
             </InputGroup>
             <InputGroup className="mb-3">
                 <InputGroup.Text id="basic-addon1">Ubrzanje do 100 KM/H</InputGroup.Text>
                 <Form.Control
                     placeholder="Ubrzanje"
-                    aria-label="modelAccelInSeconds"
-                    name="modelAccelInSeconds"
+                    aria-label="modelaccelinseconds"
+                    name="modelaccelinseconds"
                     aria-describedby="basic-addon1"
                     onChange={e => onChange(e)}
-                    value={car.modelAccelInSeconds}
+                    value={car.modelaccelinseconds}
                 />
             </InputGroup>
             <InputGroup className="mb-3">
                 <InputGroup.Text id="basic-addon1">Vrsta mijenjača</InputGroup.Text>
                 <Form.Control
                     placeholder="Mijenjač"
-                    aria-label="modelTransmissionType"
-                    name="modelTransmissionType"
+                    aria-label="modeltransmissiontype"
+                    name="modeltransmissiontype"
                     aria-describedby="basic-addon1"
                     onChange={e => onChange(e)}
-                    value={car.modelTransmissionType}
+                    value={car.modeltransmissiontype}
                 />
             </InputGroup>
 
