@@ -10,7 +10,7 @@ function AddStock() {
         stockcolor: null,
         stockrims: null,
         stockprice: null,
-        stockbought: null,
+        stockbought: false,
         modelid: null
     })
     const [models, setModels] = useState([])
@@ -19,7 +19,7 @@ function AddStock() {
 
     const addNewStock = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/carstock",
+            const response = await fetch("http://localhost:8080/api/carstocks",
                 {
                     method: "POST",
                     mode: "cors",
@@ -28,8 +28,12 @@ function AddStock() {
                     },
                     body: JSON.stringify(carStock)
                 });
+            if (response.status === 400) {
+                console.log("invalid inputs")
+            }
             let jsonData = await response.json();
             console.log(jsonData);
+
 
         } catch (e) {
             console.log(e)
@@ -51,6 +55,7 @@ function AddStock() {
             console.log(jsonData);
             setModels(jsonData)
 
+
         } catch (e) {
             console.log(e)
         }
@@ -59,6 +64,14 @@ function AddStock() {
     const onChange = e => {
         setCarStock({ ...carStock, [e.target.name]: e.target.value })
     };
+
+    const setModelId = (name) => {
+        models.forEach((model) => { if (model.modelname === name) return setCarStock({ ...carStock, modelid: model.modelid }) })
+    }
+
+    useEffect(() => {
+        getModels();
+    }, []);
 
     return (<>
         <br />
@@ -78,10 +91,10 @@ function AddStock() {
                 </Dropdown.Menu>
             </Dropdown>
             <br />
-            <Form.Select aria-label="model" onChange={e => console.log(e.target.value)}>
+            <Form.Select aria-label="model" onChange={e => setModelId(e.target.value)}>
                 <option>Odaberite model</option>
                 {Object.values(models).map((model) => {
-                    return (<option>{model}</option>)
+                    return (<option>{model.modelname}</option>)
                 })}
             </Form.Select>
             <br />
@@ -120,18 +133,8 @@ function AddStock() {
                     value={carStock.stockprice}
                 />
             </InputGroup>
-            <InputGroup className="mb-3">
-                <InputGroup.Text id="basic-addon1">Status</InputGroup.Text>
-                <Form.Control
-                    placeholder="Status"
-                    aria-label="stockbought"
-                    name="stockbought"
-                    aria-describedby="basic-addon1"
-                    onChange={e => onChange(e)}
-                    value={carStock.stockbought}
-                />
-            </InputGroup>
-            <Button variant="primary" onClick={addNewStock()}>Dodaj novu zalihu</Button>
+
+            <Button variant="primary" onClick={e => addNewStock()}>Dodaj novu zalihu</Button>
         </div>
     </>)
 

@@ -32,11 +32,18 @@ function StockList() {
 
     const searchStock = (inputString) => {
         setSearch(stock.filter((st) => st.stockcolor.toLowerCase().includes(inputString)))
+        console.log(inputString)
     }
 
     useEffect(() => {
         getStock();
     }, []);
+
+    const parseStatus = (status) => {
+        if (status) return "Nedostupno"
+        else return "Dostupno"
+
+    }
 
     return (
         <>
@@ -46,8 +53,9 @@ function StockList() {
             }}>
                 <form className="form-inline mt-4 mb-4" >
                     <MDBIcon icon="search" />
-                    <input className="form-control form-control-sm ml-3 w-99" type="text" placeholder="Search" aria-label="Search" onChange={e => searchStock(e)} />
+                    <input className="form-control form-control-sm ml-3 w-99" type="text" placeholder="Search" aria-label="Search" onChange={e => searchStock(e.target.value)} />
                 </form>
+
             </MDBCol>
             <Row xs={1} md={5} className="g-4">
                 {!search ? <>{Object.values(stock).map((st) => {
@@ -61,65 +69,41 @@ function StockList() {
                                         Naplatci: {st.stockrims}
                                     </Card.Text>
                                     <Card.Text>
-                                        Status: {st.stockbought}
+                                        Status: {parseStatus(st.stockbought)}
                                     </Card.Text>
-                                    <Button variant="success">Card Link</Button>
-                                    <Button variant="primary">Card Link</Button>
-                                    <Card.Link href="#">Another Link</Card.Link>
+                                    <Button variant="warning" className="me-2" href={"/stock/" + st.stockid}>Uredi</Button>
+                                    <Button variant="danger" href="/">Obriši</Button>
                                 </Card.Body>
                             </Card>
                         </Col>
                     </>)
                 })}</> : <>{Object.values(search).map((st) => {
-                    return (<></>)
+                    return (<>
+                        <Col>
+                            <Card style={{ width: '18rem' }}>
+                                <Card.Body>
+                                    <Card.Title>{st.modelid}</Card.Title>
+                                    <Card.Subtitle className="mb-2 text-muted">{st.stockprice} €</Card.Subtitle>
+                                    <Card.Text>
+                                        Naplatci: {st.stockrims}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        Status: {parseStatus(st.stockbought)}
+                                    </Card.Text>
+                                    <Button variant="warning" className="me-2" href={"/stock/" + st.stockid}>Uredi</Button>
+                                    <Button variant="danger" href="/">Obriši</Button>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </>)
                 })}</>}
-                <Col>
-                    <Card style={{ width: '18rem' }}>
-                        <Card.Body>
-                            <Card.Title>Volkswagen Golf R-line</Card.Title>
-                            <Card.Subtitle className="mb-2 text-muted">Cijena €</Card.Subtitle>
-                            <Card.Text>
-                                Naplatci: VOLK TE37
-                            </Card.Text>
-                            <Card.Text>
-                                Status: Dostupno
-                            </Card.Text>
-                            <Button variant="success">Card Link</Button>
-                            <Button variant="primary">Card Link</Button>
-                            <Card.Link href="#">Another Link</Card.Link>
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col>
-                    <Card style={{ width: '18rem' }}>
-                        <Card.Body>
-                            <Card.Title>Card Title</Card.Title>
-                            <Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>
-                            <Card.Text>
-                                Some quick example text to build on the card title and make up the
-                                bulk of the card's content.
-                            </Card.Text>
-                            <Card.Link href="#">Card Link</Card.Link>
-                            <Card.Link href="#">Another Link</Card.Link>
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col>
-                    <Card style={{ width: '18rem' }}>
-                        <Card.Body>
-                            <Card.Title>Card Title</Card.Title>
-                            <Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>
-                            <Card.Text>
-                                Some quick example text to build on the card title and make up the
-                                bulk of the card's content.
-                            </Card.Text>
-                            <Card.Link href="#">Card Link</Card.Link>
-                            <Card.Link href="#">Another Link</Card.Link>
-                        </Card.Body>
-                    </Card>
-                </Col>
 
+                <Button style={{
+                    fontSize: "100px",
+                    fontWeight: "bold"
+                }} href="/stock/new">Add</Button>
             </Row>
+
         </>
     )
 
