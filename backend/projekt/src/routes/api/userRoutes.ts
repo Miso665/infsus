@@ -1,8 +1,10 @@
 import express from 'express';
 var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
-import { UserDTO } from '../../models/user';
+import { User, UserDTO } from '../../models/user';
 import { dbDeleteUser, dbGetAllUsers, dbGetUser, dbInsertUser, dbUpdateUser } from '../../db/userDBAccess';
+import { dbGetRole } from '../../db/roleDBAccess';
+import { Role } from '../../models/role';
 
 const router = express.Router()
 
@@ -27,13 +29,44 @@ router.get("/:id(\\d+)", async (req, res) => {
     let id: number = Number(req.params.id)
     let user = await dbGetUser(id)
 
-    if (user != null) {
+    if (user) {
         res.json(user)
     }
     else {
         res.sendStatus(404)
     }
 })
+
+
+router.get("/deepaccess/:id(\\d+)", async (req, res) => {
+    const id: number = Number(req.params.id)
+    const user = await dbGetUser(id)
+
+    if (user) {
+        let roleID = user.roleid;
+        const role = await dbGetRole(roleID);
+
+        let roleInstance: Role = {
+            roleID: role.roleid,
+            roleName: role.rolename,
+            roleAccessLevel: role.roleaccesslevel
+        }
+
+        let userInstance: User = {
+            userID: user.userid,
+            userName: user.username,
+            userSurname: user.usersurname,
+            OIB: user.oib,
+            role: roleInstance
+        }
+        
+        res.json(userInstance)
+    }
+    else {
+        res.sendStatus(404)
+    }
+})
+
 
 router.put("/:id(\\d+)", jsonParser, async (req, res) => {
     let id: number = Number(req.params.id)

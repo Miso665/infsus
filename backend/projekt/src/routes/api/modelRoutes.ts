@@ -1,8 +1,10 @@
 import express from 'express';
 var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
-import { ModelDTO } from '../../models/model';
+import { Model, ModelDTO } from '../../models/model';
 import { dbGetAllModels, dbGetModel, dbInsertModel, dbUpdateModel, dbDeleteModel } from '../../db/modelDBAccess';
+import { dbGetBrand } from '../../db/brandDBAccess';
+import { Brand } from '../../models/brand';
 
 const router = express.Router();
 
@@ -29,6 +31,39 @@ router.get("/:id(\\d+)", async (req, res) => {
 
     if (model != null) {
         res.json(model);
+    } else {
+        res.sendStatus(404);
+    }
+});
+
+
+router.get("/deepaccess/:id(\\d+)", async (req, res) => {
+    const id: number = Number(req.params.id);
+    const model = await dbGetModel(id);
+
+    if (model) {
+
+        const brandID = model.brandid;
+        const brand = await dbGetBrand(brandID);
+
+        let brandInstance: Brand = {
+            brandID: brand.brandid,
+            brandName: brand.brandname,
+            brandContractStart: new Date(brand.brandcontractstart),
+            brandContractEnd: new Date(brand.brandcontractend)
+        };
+
+        let modelInstance: Model = {
+            modelID: model.modelid,
+            modelName: model.modelname,
+            modelHorsePower: model.modelhorsepower,
+            modelTopSpeed: model.modeltopspeed,
+            modelTransmissionType: model.modeltransmissiontype,
+            modelAccelInSeconds: model.modelaccelinseconds,
+            brand: brandInstance
+        }
+
+        res.json(modelInstance);
     } else {
         res.sendStatus(404);
     }

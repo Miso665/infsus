@@ -1,0 +1,110 @@
+[
+    {
+        "model": "brand",
+        "routes": [
+            {
+                "url": "/api/brands",
+                "methods": ["GET", "POST"]
+            },
+            {
+                "url": "/api/brands/{id}",
+                "methods": ["GET", "PUT", "DELETE"]
+            }
+        ]
+    },
+    {
+        "model": "carStock",
+        "routes": [
+            {
+                "url": "/api/carstocks",
+                "methods": ["GET", "POST"]
+            },
+            {
+                "url": "/api/carstocks/{id}",
+                "methods": ["GET", "PUT", "DELETE"]
+            },
+            {
+                "url": "/api/carstocks/deepaccess/{id}",
+                "methods": ["GET"]
+            }
+        ]
+    },
+    {
+        "model": "model",
+        "routes": [
+            {
+                "url": "/api/models",
+                "methods": ["GET", "POST"]
+            },
+            {
+                "url": "/api/models/{id}",
+                "methods": ["GET", "PUT", "DELETE"]
+            },
+            {
+                "url": "/api/models/deepaccess/{id}",
+                "methods": ["GET"]
+            }
+        ]
+    },
+    {
+        "model": "role",
+        "routes": [
+            {
+                "url": "/api/roles",
+                "methods": ["GET"]
+            },
+            {
+                "url": "/api/roles/{id}",
+                "methods": ["GET"]
+            }
+        ]
+    },
+    {
+        "model": "testDrive",
+        "routes": [
+            {
+                "url": "/api/testDrives",
+                "methods": ["GET", "POST"]
+            },
+            {
+                "url": "/api/testDrives/{id}",
+                "methods": ["GET", "PUT", "DELETE"]
+            },
+            {
+                "url": "/api/testDrives/deepaccess/{id}",
+                "methods": ["GET"]
+            }
+        ]
+    },
+    {
+        "model": "transaction",
+        "routes": [
+            {
+                "url": "/api/transactions",
+                "methods": ["GET", "POST"]
+            },
+            {
+                "url": "/api/transactions/{id}",
+                "methods": ["GET", "PUT", "DELETE"]
+            }
+        ]
+    },
+    {
+        "model": "user",
+        "routes": [
+            {
+                "url": "/api/users",
+                "methods": ["GET", "POST"]
+            },
+            {
+                "url": "/api/users/{id}",
+                "methods": ["GET", "PUT", "DELETE"]
+            },
+            {
+                "url": "/api/users/deepaccess/{id}",
+                "methods": ["GET"]
+            }
+        ]
+    }
+
+]

@@ -2,6 +2,9 @@ import express from 'express';
 
 const router = express.Router();
 
+import roleAPI from "./roleRoutes"
+router.use("/roles", roleAPI)
+
 import userAPI from "./userRoutes"
 router.use("/users", userAPI);
 
