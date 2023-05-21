@@ -14,6 +14,34 @@ router.get("/", async (req, res) => {
     res.json(users)
 })
 
+router.get("/deepaccess", async (req, res) => {
+    let users = await dbGetAllUsers()
+    let deepAccessUsers: User[] = [];
+
+    for (let user of users) {
+        let roleID = user.roleid;
+        const role = await dbGetRole(roleID);
+
+        let roleInstance: Role = {
+            roleID: role.roleid,
+            roleName: role.rolename,
+            roleAccessLevel: role.roleaccesslevel
+        }
+
+        let userInstance: User = {
+            userID: user.userid,
+            userName: user.username,
+            userSurname: user.usersurname,
+            OIB: user.oib,
+            role: roleInstance
+        }
+
+        deepAccessUsers.push(userInstance)
+    }
+
+    res.json(deepAccessUsers)
+})
+
 router.post("/", jsonParser, async (req, res) => {
     let [valid, invalidFields] = await UserDTO.validate(req.body);
     if (valid) {

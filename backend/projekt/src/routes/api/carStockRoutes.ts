@@ -22,6 +22,48 @@ router.get('/', async (req, res) => {
     res.json(carStocks);
 });
 
+router.get('/deepaccess', async (req, res) => {
+    const carStocks = await dbGetAllCarStocks();
+    let deepAccessCarStocks: CarStock[] = [];
+
+    for (let carStock of carStocks) {
+        const modeID = carStock.modelid;
+        const model = await dbGetModel(modeID);
+        const brandID = model.brandid;
+        const brand = await dbGetBrand(brandID);
+
+        let brandInstance: Brand = {
+            brandID: brand.brandid,
+            brandName: brand.brandname,
+            brandContractStart: new Date(brand.brandcontractstart),
+            brandContractEnd: new Date(brand.brandcontractend)
+        };
+
+        let modelInstance: Model = {
+            modelID: model.modelid,
+            modelName: model.modelname,
+            modelHorsePower: model.modelhorsepower,
+            modelTopSpeed: model.modeltopspeed,
+            modelTransmissionType: model.modeltransmissiontype,
+            modelAccelInSeconds: model.modelaccelinseconds,
+            brand: brandInstance
+        }
+
+        let carStockInstance: CarStock = {
+            stockID: carStock.stockid,
+            stockPrice: carStock.stockprice,
+            stockColor: carStock.stockcolor,
+            stockRims: carStock.stockrims,
+            stockBought: carStock.stockbought,
+            model: modelInstance
+        }
+
+        deepAccessCarStocks.push(carStockInstance)
+    }
+
+    res.json(deepAccessCarStocks);
+});
+
 router.get('/:id(\\d+)', async (req, res) => {
     const id: number = Number(req.params.id);
     const carStock = await dbGetCarStock(id);

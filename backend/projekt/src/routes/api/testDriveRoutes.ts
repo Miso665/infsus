@@ -22,6 +22,78 @@ router.get("/", async (req, res) => {
     res.json(testDrives);
 });
 
+router.get("/deepaccess", async (req, res) => {
+    let testDrives = await dbGetAllTestDrives();
+    let deepAccessTestDrives: TestDrive[] = [];
+
+    for (let testDrive of testDrives) {
+        const stockID = testDrive.stockid
+        const carStock = await dbGetCarStock(stockID);
+        const modeID = carStock.modelid;
+        const model = await dbGetModel(modeID);
+        const brandID = model.brandid;
+        const brand = await dbGetBrand(brandID);
+
+        let brandInstance: Brand = {
+            brandID: brand.brandid,
+            brandName: brand.brandname,
+            brandContractStart: new Date(brand.brandcontractstart),
+            brandContractEnd: new Date(brand.brandcontractend)
+        };
+
+        let modelInstance: Model = {
+            modelID: model.modelid,
+            modelName: model.modelname,
+            modelHorsePower: model.modelhorsepower,
+            modelTopSpeed: model.modeltopspeed,
+            modelTransmissionType: model.modeltransmissiontype,
+            modelAccelInSeconds: model.modelaccelinseconds,
+            brand: brandInstance
+        }
+
+        let carStockInstance: CarStock = {
+            stockID: carStock.stockid,
+            stockPrice: carStock.stockprice,
+            stockColor: carStock.stockcolor,
+            stockRims: carStock.stockrims,
+            stockBought: carStock.stockbought,
+            model: modelInstance
+        }
+
+
+        let userID = testDrive.userid;
+        const user = await dbGetUser(userID);
+        let roleID = user.roleid;
+        const role = await dbGetRole(roleID);
+
+        let roleInstance: Role = {
+            roleID: role.roleid,
+            roleName: role.rolename,
+            roleAccessLevel: role.roleaccesslevel
+        }
+
+        let userInstance: User = {
+            userID: user.userid,
+            userName: user.username,
+            userSurname: user.usersurname,
+            OIB: user.oib,
+            role: roleInstance
+        }
+
+        let testDriveInstance: TestDrive = {
+            testDriveID: testDrive.testdriveid,
+            testDriveTime: new Date (testDrive.testdrivetime),
+            testDriveConcluded: testDrive.testdriveconcluded,
+            user: userInstance,
+            stock: carStockInstance
+        }
+
+        deepAccessTestDrives.push(testDriveInstance)
+    }
+
+    res.json(deepAccessTestDrives);
+});
+
 router.post("/", jsonParser, async (req, res) => {
     let [valid, invalidFields] = await TestDriveDTO.validate(req.body);
     if (valid) {

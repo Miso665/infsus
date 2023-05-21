@@ -14,6 +14,37 @@ router.get("/", async (req, res) => {
     res.json(models);
 });
 
+router.get("/deepaccess", async (req, res) => {
+    let models = await dbGetAllModels();
+    let deepAccessModels: Model[] = [];
+    
+    for (let model of models) {
+        const brandID = model.brandid;
+        const brand = await dbGetBrand(brandID);
+
+        let brandInstance: Brand = {
+            brandID: brand.brandid,
+            brandName: brand.brandname,
+            brandContractStart: new Date(brand.brandcontractstart),
+            brandContractEnd: new Date(brand.brandcontractend)
+        };
+
+        let modelInstance: Model = {
+            modelID: model.modelid,
+            modelName: model.modelname,
+            modelHorsePower: model.modelhorsepower,
+            modelTopSpeed: model.modeltopspeed,
+            modelTransmissionType: model.modeltransmissiontype,
+            modelAccelInSeconds: model.modelaccelinseconds,
+            brand: brandInstance
+        }
+
+        deepAccessModels.push(modelInstance)
+    }
+
+    res.json(deepAccessModels);
+});
+
 
 router.post("/", jsonParser, async (req, res) => {
     let [valid, invalidFields] = await ModelDTO.validate(req.body);

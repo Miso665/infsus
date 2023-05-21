@@ -20,6 +20,10 @@
                 "methods": ["GET", "POST"]
             },
             {
+                "url": "/api/carstocks/deepaccess",
+                "methods": ["GET"]
+            },
+            {
                 "url": "/api/carstocks/{id}",
                 "methods": ["GET", "PUT", "DELETE"]
             },
@@ -35,6 +39,10 @@
             {
                 "url": "/api/models",
                 "methods": ["GET", "POST"]
+            },
+            {
+                "url": "/api/models/deepaccess",
+                "methods": ["GET"]
             },
             {
                 "url": "/api/models/{id}",
@@ -67,6 +75,10 @@
                 "methods": ["GET", "POST"]
             },
             {
+                "url": "/api/testDrives/deepaccess",
+                "methods": ["GET"]
+            },
+            {
                 "url": "/api/testDrives/{id}",
                 "methods": ["GET", "PUT", "DELETE"]
             },
@@ -95,6 +107,10 @@
             {
                 "url": "/api/users",
                 "methods": ["GET", "POST"]
+            },
+            {
+                "url": "/api/users/deepaccess",
+                "methods": ["GET"]
             },
             {
                 "url": "/api/users/{id}",
