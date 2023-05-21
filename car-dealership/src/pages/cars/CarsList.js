@@ -13,7 +13,7 @@ function CarsList() {
 
     const getCars = async () => {
         try {
-            const response = await fetch("http://localhost:5000/cars",
+            const response = await fetch("http://localhost:8080/api/models",
                 {
                     method: "GET",
                     mode: "cors",
@@ -34,6 +34,10 @@ function CarsList() {
         setSearch(cars.filter((car) => car.name.toLowerCase().includes(inputString)))
     }
 
+    const deleteCar = async (carId) => {
+
+    }
+
     useEffect(() => {
         getCars();
     }, []);
@@ -51,56 +55,52 @@ function CarsList() {
             </MDBCol>
             <Row xs={1} md={5} className="g-4">
                 {!search ? <>{Object.values(cars).map((car) => {
-                    return (<></>)
+                    return (<>
+                        <Col>
+                            <Card style={{ width: '18rem' }}>
+                                <Card.Body>
+                                    <Card.Title>{car.modelname}</Card.Title>
+                                    <Card.Text>
+                                        Snaga: {car.modelhorsepower} HP
+                                    </Card.Text>
+                                    <Card.Text>
+                                        Maksimalna brzina: {car.modeltopspeed} KM/H
+                                    </Card.Text>
+                                    <Card.Text>
+                                        Vrsta mijenača: {car.modeltransmissiontype}
+                                    </Card.Text>
+                                    <Button variant="warning" className="me-2" href={"/car/" + car.modelid}>Uredi</Button>
+                                    <Button variant="danger" onClick={() => deleteCar(car.modelid)}>Obriši</Button>
+                                </Card.Body>
+                            </Card>
+                        </Col></>)
                 })}</> : <>{Object.values(search).map((car) => {
-                    return (<></>)
+                    return (<>
+                        <Col>
+                            <Card style={{ width: '18rem' }}>
+                                <Card.Body>
+                                    <Card.Title>{car.modelid}</Card.Title>
+                                    <Card.Text>
+                                        Snaga: {car.modelhorsepower} HP
+                                    </Card.Text>
+                                    <Card.Text>
+                                        Maksimalna brzina: {car.modeltopspeed} KM/H
+                                    </Card.Text>
+                                    <Card.Text>
+                                        Vrsta mijenača: {car.modeltransmissiontype}
+                                    </Card.Text>
+                                    <Button variant="warning" className="me-2" href={"/car/" + car.modelid}>Uredi</Button>
+                                    <Button variant="danger" onClick={() => deleteCar(car.modelid)}>Obriši</Button>
+                                </Card.Body>
+                            </Card>
+                        </Col></>)
                 })}</>}
-                <Col>
-                    <Card style={{ width: '18rem' }}>
-                        <Card.Body>
-                            <Card.Title>Volkswagen Golf R-line</Card.Title>
-                            <Card.Subtitle className="mb-2 text-muted">Cijena €</Card.Subtitle>
-                            <Card.Text>
-                                Snaga motora: 150 HP
-                            </Card.Text>
-                            <Card.Text>
-                                Maksimalna brzina: 210 KM/H
-                            </Card.Text>
-                            <Button variant="success">Card Link</Button>
-                            <Button variant="primary">Card Link</Button>
-                            <Card.Link href="#">Another Link</Card.Link>
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col>
-                    <Card style={{ width: '18rem' }}>
-                        <Card.Body>
-                            <Card.Title>Card Title</Card.Title>
-                            <Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>
-                            <Card.Text>
-                                Some quick example text to build on the card title and make up the
-                                bulk of the card's content.
-                            </Card.Text>
-                            <Card.Link href="#">Card Link</Card.Link>
-                            <Card.Link href="#">Another Link</Card.Link>
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col>
-                    <Card style={{ width: '18rem' }}>
-                        <Card.Body>
-                            <Card.Title>Card Title</Card.Title>
-                            <Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>
-                            <Card.Text>
-                                Some quick example text to build on the card title and make up the
-                                bulk of the card's content.
-                            </Card.Text>
-                            <Card.Link href="#">Card Link</Card.Link>
-                            <Card.Link href="#">Another Link</Card.Link>
-                        </Card.Body>
-                    </Card>
-                </Col>
-
+                <div style={{
+                    width: "20%",
+                    height: "20%"
+                }}>
+                    <Button href="/cars/new">Dodaj novi</Button>
+                </div>
             </Row>
         </>
     )

@@ -7,10 +7,11 @@ import Table from "react-bootstrap/Table";
 
 function UsersList() {
     const [users, setUsers] = useState([])
+    const [roles, setRoles] = useState([])
 
     const getUsersData = async () => {
         try {
-            const response = await fetch("http://localhost:5000/users",
+            const response = await fetch("http://localhost:8080/api/users/deepaccess",
                 {
                     method: "GET",
                     mode: "cors",
@@ -19,7 +20,7 @@ function UsersList() {
                     }
                 });
             let jsonData = await response.json();
-            //console.log(jsonData);
+            console.log(jsonData);
             setUsers(jsonData)
 
         } catch (e) {
@@ -27,8 +28,48 @@ function UsersList() {
         }
     }
 
+    const getRolesData = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/roles",
+                {
+                    method: "GET",
+                    mode: "cors",
+                    headers: {
+                        "Content-type": "application/json"
+                    }
+                });
+            let jsonData = await response.json();
+            console.log(jsonData);
+            setRoles(jsonData)
+
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    const deleteUser = async (userID) => {
+        if (window.confirm("Jeste li sigurni da želite izbrisati korisnika: " + userID)) {
+            try {
+                const response = await fetch("http://localhost:8080/api/users/" + userID,
+                    {
+                        method: "DELETE",
+                        mode: "cors",
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    });
+                let jsonData = await response.json();
+                getUsersData()
+
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    }
+
     useEffect(() => {
         getUsersData();
+        getRolesData()
     }, []);
 
     return (<>
@@ -43,29 +84,24 @@ function UsersList() {
                         <th>Ime</th>
                         <th>Prezime</th>
                         <th>OIB</th>
+                        <th>Uloga</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {Object.values(users).map((user) => {
                         return (<tr>
-                            <td>{user.username}</td>
-                            <td>{user.usersurname}</td>
-                            <td>{user.useroib}</td>
-                            <td><Button variant="warning" href={"/user/" + user.userid}>Uredi</Button>
-                                <Button variant="danger">Obriši</Button></td>
+                            <td>{user.userName}</td>
+                            <td>{user.userSurname}</td>
+                            <td>{user.OIB}</td>
+                            <td>{user.role.roleName}</td>
+                            <td><Button variant="warning" className="me-2" href={"/users/" + user.userID}>Uredi</Button>
+                                <Button variant="danger" onClick={() => deleteUser(user.userID)}>Obriši</Button></td>
                         </tr>)
                     })}
-                    <tr>
-                        <td>Mirko</td>
-                        <td>Mirkic</td>
-                        <td>32414253472</td>
-                        <td><Button variant="warning" className="me-2">Uredi</Button>
-                            <Button variant="danger">Obriši</Button></td>
-
-                    </tr>
                 </tbody>
             </Table>
+            <Button href="/users/new">Dodaj novog</Button>
 
         </div>
     </>)

@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Card from 'react-bootstrap/Card';
 import { CardGroup } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
@@ -7,6 +8,7 @@ import Button from "react-bootstrap/Button";
 import { MDBCol, MDBIcon } from "mdbreact";
 
 function StockList() {
+    let navigate = useNavigate()
     const [stock, setStock] = useState([])
     const [search, setSearch] = useState("")
 
@@ -30,6 +32,28 @@ function StockList() {
         }
     }
 
+    const deleteStock = async (stockId) => {
+        if (window.confirm("Jeste li sigurni da želite izbrisati zalihu: " + stockId)) {
+            try {
+                const response = await fetch("http://localhost:8080/api/carstocks/" + stockId,
+                    {
+                        method: "DELETE",
+                        mode: "cors",
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    });
+                //let jsonData = await response.json();
+                //console.log(jsonData)
+                console.log("Deleted")
+                getStock()
+
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    }
+
     const searchStock = (inputString) => {
         setSearch(stock.filter((st) => st.stockcolor.toLowerCase().includes(inputString)))
         console.log(inputString)
@@ -42,7 +66,6 @@ function StockList() {
     const parseStatus = (status) => {
         if (status) return "Nedostupno"
         else return "Dostupno"
-
     }
 
     return (
@@ -72,7 +95,7 @@ function StockList() {
                                         Status: {parseStatus(st.stockbought)}
                                     </Card.Text>
                                     <Button variant="warning" className="me-2" href={"/stock/" + st.stockid}>Uredi</Button>
-                                    <Button variant="danger" href="/">Obriši</Button>
+                                    <Button variant="danger" onClick={() => deleteStock(st.stockid)}>Obriši</Button>
                                 </Card.Body>
                             </Card>
                         </Col>
@@ -91,17 +114,18 @@ function StockList() {
                                         Status: {parseStatus(st.stockbought)}
                                     </Card.Text>
                                     <Button variant="warning" className="me-2" href={"/stock/" + st.stockid}>Uredi</Button>
-                                    <Button variant="danger" href="/">Obriši</Button>
+                                    <Button variant="danger" onClick={() => deleteStock(st.stockid)}>Obriši</Button>
                                 </Card.Body>
                             </Card>
                         </Col>
                     </>)
                 })}</>}
-
-                <Button style={{
-                    fontSize: "100px",
-                    fontWeight: "bold"
-                }} href="/stock/new">Add</Button>
+                <div style={{
+                    width: "20%",
+                    height: "20%"
+                }}>
+                    <Button href="/stock/new">Dodaj novo</Button>
+                </div>
             </Row>
 
         </>

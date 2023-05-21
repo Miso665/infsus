@@ -34,8 +34,8 @@ function App() {
         <Route exact path="/stock/new" element={<AddStock />}></Route>
         <Route exact path="/testdrive/new" element={<AddTestDrive />}></Route>
         <Route exact path="/testdrive/:testDriveId" element={<TestDrive />}></Route>
-        <Route exact path="/user/new" element={<AddUser />}></Route>
-        <Route exact path="/user/:userId" element={<User />}></Route>
+        <Route exact path="/users/new" element={<AddUser />}></Route>
+        <Route exact path="/users/:userId" element={<User />}></Route>
         <Route exact path="/users" element={<UsersList />}></Route>
       </Routes>
     </BrowserRouter>
