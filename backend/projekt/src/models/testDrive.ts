@@ -2,7 +2,7 @@ import { dbGetAllUserIDs } from "../db/userDBAccess";
 import { CarStock } from "./carStock";
 import { User } from "./user";
 import { dbGetAllCarStockIDs } from "../db/carStockDBAccess";
-import { doesTestDriveExist } from "../db/testDriveDBAccess";
+import { testDriveCompositeKeyAvailability } from "../db/testDriveDBAccess";
 
 export class TestDrive {
     testDriveTime: Date;
@@ -52,7 +52,7 @@ export class TestDriveDTO {
         }
 
         if (!wrongAttributes.includes("testdrivetime") && !wrongAttributes.includes("userid") && !wrongAttributes.includes("stockid")) {
-            if (doesTestDriveExist(testDrive.userid, testDrive.stockid, testDrive.testdrivetime)) {
+            if (!(await testDriveCompositeKeyAvailability(testDrive.userid, testDrive.stockid, testDrive.testdrivetime))) {
                 isValid = false;
                 wrongAttributes.push("Key(driverId, stockId, testDriveTime) already exists");
             }

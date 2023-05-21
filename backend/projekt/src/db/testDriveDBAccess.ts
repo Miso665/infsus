@@ -94,14 +94,15 @@ export async function concludeTestDriveConcluded(testDriveID: number): Promise<b
     }
 }
 
-export async function doesTestDriveExist(userId: number, stockId: number, testDriveTime: string): Promise<boolean> {
+export async function testDriveCompositeKeyAvailability(userId: number, stockId: number, testDriveTime: string): Promise<boolean> {
     const query = 'SELECT COUNT(*) AS count FROM testdrives WHERE userid = $1 AND stockid = $2 AND testdrivetime = $3;';
     const values = [userId, stockId, testDriveTime];
 
     try {
         const result: QueryResult<{ count: number }> = await db.query(query, values);
         const count = result.rows[0].count;
-        return count > 0;
+
+        return count == 0;
     } catch (error) {
         console.error('Error checking if test drive exists:', error);
         return false;
