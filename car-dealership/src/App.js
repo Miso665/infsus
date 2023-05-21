@@ -32,8 +32,8 @@ function App() {
         <Route exact path="/stock/:stockId" element={<CarStock />}></Route>
         <Route exact path="/stock" element={<StockList />}></Route>
         <Route exact path="/stock/new" element={<AddStock />}></Route>
-        <Route exact path="/testdrive/new" element={<AddTestDrive />}></Route>
-        <Route exact path="/testdrive/:testDriveId" element={<TestDrive />}></Route>
+        <Route exact path="/testdrives/new" element={<AddTestDrive />}></Route>
+        <Route exact path="/testdrives/:testDriveId" element={<TestDrive />}></Route>
         <Route exact path="/users/new" element={<AddUser />}></Route>
         <Route exact path="/users/:userId" element={<User />}></Route>
         <Route exact path="/users" element={<UsersList />}></Route>

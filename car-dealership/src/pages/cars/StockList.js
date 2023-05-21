@@ -1,20 +1,17 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import Card from 'react-bootstrap/Card';
-import { CardGroup } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import { MDBCol, MDBIcon } from "mdbreact";
 
 function StockList() {
-    let navigate = useNavigate()
     const [stock, setStock] = useState([])
     const [search, setSearch] = useState("")
 
     const getStock = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/carstocks",
+            const response = await fetch("http://localhost:8080/api/carstocks/deepaccess",
                 {
                     method: "GET",
                     mode: "cors",
@@ -55,7 +52,7 @@ function StockList() {
     }
 
     const searchStock = (inputString) => {
-        setSearch(stock.filter((st) => st.stockcolor.toLowerCase().includes(inputString)))
+        setSearch(stock.filter((st) => st.model.modelName.toLowerCase().includes(inputString)))
         console.log(inputString)
     }
 
@@ -74,9 +71,10 @@ function StockList() {
                 margin: "auto",
                 width: "50%"
             }}>
+                <h2>Zaliha</h2>
                 <form className="form-inline mt-4 mb-4" >
                     <MDBIcon icon="search" />
-                    <input className="form-control form-control-sm ml-3 w-99" type="text" placeholder="Search" aria-label="Search" onChange={e => searchStock(e.target.value)} />
+                    <input className="form-control form-control-sm ml-3 w-99" type="text" placeholder="Pretraga po modelu" aria-label="Search" onChange={e => searchStock(e.target.value)} />
                 </form>
 
             </MDBCol>
@@ -86,16 +84,19 @@ function StockList() {
                         <Col>
                             <Card style={{ width: '18rem' }}>
                                 <Card.Body>
-                                    <Card.Title>{st.modelid}</Card.Title>
-                                    <Card.Subtitle className="mb-2 text-muted">{st.stockprice} €</Card.Subtitle>
+                                    <Card.Title>{st.model.modelName}</Card.Title>
+                                    <Card.Subtitle className="mb-2 text-muted">{st.stockPrice} €</Card.Subtitle>
                                     <Card.Text>
-                                        Naplatci: {st.stockrims}
+                                        Boja: {st.stockColor}
                                     </Card.Text>
                                     <Card.Text>
-                                        Status: {parseStatus(st.stockbought)}
+                                        Naplatci: {st.stockRims}
                                     </Card.Text>
-                                    <Button variant="warning" className="me-2" href={"/stock/" + st.stockid}>Uredi</Button>
-                                    <Button variant="danger" onClick={() => deleteStock(st.stockid)}>Obriši</Button>
+                                    <Card.Text>
+                                        Status: {parseStatus(st.stockBought)}
+                                    </Card.Text>
+                                    <Button variant="warning" className="me-2" href={"/stock/" + st.stockID}>Uredi</Button>
+                                    <Button variant="danger" onClick={() => deleteStock(st.stockID)}>Obriši</Button>
                                 </Card.Body>
                             </Card>
                         </Col>
@@ -105,16 +106,19 @@ function StockList() {
                         <Col>
                             <Card style={{ width: '18rem' }}>
                                 <Card.Body>
-                                    <Card.Title>{st.modelid}</Card.Title>
-                                    <Card.Subtitle className="mb-2 text-muted">{st.stockprice} €</Card.Subtitle>
+                                    <Card.Title>{st.model.modelName}</Card.Title>
+                                    <Card.Subtitle className="mb-2 text-muted">{st.stockPrice} €</Card.Subtitle>
                                     <Card.Text>
-                                        Naplatci: {st.stockrims}
+                                        Boja: {st.stockColor}
                                     </Card.Text>
                                     <Card.Text>
-                                        Status: {parseStatus(st.stockbought)}
+                                        Naplatci: {st.stockRims}
                                     </Card.Text>
-                                    <Button variant="warning" className="me-2" href={"/stock/" + st.stockid}>Uredi</Button>
-                                    <Button variant="danger" onClick={() => deleteStock(st.stockid)}>Obriši</Button>
+                                    <Card.Text>
+                                        Status: {parseStatus(st.stockBought)}
+                                    </Card.Text>
+                                    <Button variant="warning" className="me-2" href={"/stock/" + st.stockID}>Uredi</Button>
+                                    <Button variant="danger" onClick={() => deleteStock(st.stockID)}>Obriši</Button>
                                 </Card.Body>
                             </Card>
                         </Col>

@@ -1,5 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
-import NavBar from "../../components/Navbar";
+import React from "react";
 
 
 function Home() {
@@ -11,7 +10,7 @@ function Home() {
                 height: "92vh",
                 width: "100vw"
             }}>
-                <h1 style={{
+                <h2 style={{
                     color: "white",
                     margin: "auto",
                     width: "20%",
@@ -19,8 +18,8 @@ function Home() {
                     textAlign: "center",
                     verticalAlign: "middle"
 
-                }}>Car Dealership
-                </h1>
+                }}>
+                </h2>
             </div>
             <image href="banner-bmw.jpg"></image>
         </>
