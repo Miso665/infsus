@@ -1,13 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { useParams, useNavigate, Navigate } from "react-router-dom";
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
 
 function UsersList() {
     const [users, setUsers] = useState([])
-    const [roles, setRoles] = useState([])
 
     const getUsersData = async () => {
         try {
@@ -22,25 +18,6 @@ function UsersList() {
             let jsonData = await response.json();
             console.log(jsonData);
             setUsers(jsonData)
-
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    const getRolesData = async () => {
-        try {
-            const response = await fetch("http://localhost:8080/api/roles",
-                {
-                    method: "GET",
-                    mode: "cors",
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                });
-            let jsonData = await response.json();
-            console.log(jsonData);
-            setRoles(jsonData)
 
         } catch (e) {
             console.log(e)
@@ -69,7 +46,6 @@ function UsersList() {
 
     useEffect(() => {
         getUsersData();
-        getRolesData()
     }, []);
 
     return (<>
@@ -78,13 +54,14 @@ function UsersList() {
             margin: "auto",
             width: "50%"
         }}>
-            <Table striped bordered hover>
+            <h2>Korisnici</h2>
+            <Table striped bordered hover name="users">
                 <thead>
                     <tr>
-                        <th>Ime</th>
-                        <th>Prezime</th>
-                        <th>OIB</th>
-                        <th>Uloga</th>
+                        <th name="Ime">Ime</th>
+                        <th name="Prezime">Prezime</th>
+                        <th name="OIB">OIB</th>
+                        <th name="Uloga">Uloga</th>
                         <th></th>
                     </tr>
                 </thead>

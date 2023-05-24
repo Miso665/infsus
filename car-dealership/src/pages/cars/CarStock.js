@@ -1,10 +1,11 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { useParams, useNavigate, Navigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
 import Alert from "react-bootstrap/Alert";
+import Modal from "react-bootstrap/Modal";
 
 function CarStock() {
     let navigate = useNavigate()
@@ -36,6 +37,8 @@ function CarStock() {
     let [models, setModels] = useState([])
     let [alert, setAlert] = useState(null)
     const [invalidInputs, setInvalidInputs] = useState(null)
+    const [users, setUsers] = useState([])
+    const [alertTD, setAlertTD] = useState(null)
 
     const getStockData = async () => {
         try {
@@ -75,7 +78,21 @@ function CarStock() {
     }
 
     const getUserData = async () => {
-        // TODO fetchanje usera
+        try {
+            const response = await fetch("http://localhost:8080/api/users",
+                {
+                    method: "GET",
+                    mode: "cors",
+                    headers: {
+                        "Content-type": "application/json"
+                    }
+                });
+            let jsonData = await response.json();
+            setUsers(jsonData)
+
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     const setStockData = async () => {
@@ -119,20 +136,24 @@ function CarStock() {
     }
 
     const deleteStock = async () => {
-        try {
-            const response = await fetch("http://localhost:5000/stock/delete/" + stockId,
-                {
-                    method: "GET",
-                    mode: "cors",
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                });
-            let jsonData = await response.json();
-            navigate("/")
+        if (window.confirm("Jeste li sigurni da želite izbrisati zalihu?")) {
+            try {
+                const response = await fetch("http://localhost:8080/api/carstocks/" + stockId,
+                    {
+                        method: "DELETE",
+                        mode: "cors",
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    });
+                //let jsonData = await response.json();
+                //console.log(jsonData)
+                console.log("Deleted")
+                navigate("/stock")
 
-        } catch (e) {
-            console.log(e)
+            } catch (e) {
+                console.log(e)
+            }
         }
     }
 
@@ -152,6 +173,69 @@ function CarStock() {
         } catch (e) {
             console.log(e)
         }
+    }
+
+    const deleteTestDrive = async (testdriveid) => {
+        if (window.confirm("Jeste li sigurni da želite izbrisati testnu vožnju: " + testdriveid)) {
+            try {
+                const response = await fetch("http://localhost:8080/api/testdrives/" + testdriveid,
+                    {
+                        method: "DELETE",
+                        mode: "cors",
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    });
+                //let jsonData = await response.json();
+                //console.log(jsonData)
+                console.log("Deleted")
+                getTestDriveData()
+
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    }
+
+    const addNewTestDrive = async () => {
+        let userId
+        for (let user of users) {
+            if (newTestDrive.username === user.username + " " + user.usersurname) {
+                userId = user.userid
+                break
+            }
+        }
+        let body = {
+            testdrivetime: newTestDrive.testdrivetime,
+            testdriveconcluded: false,
+            stockid: parseInt(stockId),
+            userid: userId
+        }
+        try {
+            const response = await fetch("http://localhost:8080/api/testdrives",
+                {
+                    method: "POST",
+                    mode: "cors",
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify(body)
+                });
+            let jsonData = await response.json();
+            if (response.status === 400) {
+                setAlertTD(true)
+                console.log(jsonData)
+            } else {
+                console.log(jsonData)
+                setAlert(false)
+                handleClose()
+                getTestDriveData()
+            }
+
+        } catch (e) {
+            console.log(e)
+        }
+
     }
 
     const changeStatus = (e) => {
@@ -176,6 +260,7 @@ function CarStock() {
         getStockData();
         getTestDriveData()
         getModelData()
+        getUserData()
     }, []);
     const onChange = e => {
         setDetailedCarStock({ ...detailedCarStock, [e.target.name]: e.target.value })
@@ -186,12 +271,35 @@ function CarStock() {
         if (status) return "Obavljeno"
         else return "Ne obavljeno"
     }
+
+    const parseUser = (userid) => {
+        let userParsed
+        users.forEach((user) => { if (user.userid === userid) userParsed = user.username + " " + user.usersurname })
+        return userParsed
+    }
+
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    const [newTestDrive, setNewTestDrive] = useState({
+        testdrivetime: null,
+        testdriveconcluded: false,
+        stockid: stockId,
+        userid: null,
+        username: null
+    })
+    const onChangeTestDrive = e => {
+        setNewTestDrive({ ...newTestDrive, [e.target.name]: e.target.value })
+        console.log(newTestDrive)
+    }
     return (<>
         <br />
         <div style={{
             margin: "auto",
             width: "50%"
         }}>
+            <h1>Uređivanje zalihe broj {detailedCarStock.stockID}</h1>
             {alert === "OK" ? <><Alert key="success" variant="success">
                 Uspješno ažurirano!
             </Alert></> : <></>}
@@ -252,6 +360,7 @@ function CarStock() {
                 <Button variant="danger" onClick={() => deleteStock()}>Obriši</Button>
             </div>
             <br />
+            <h2>Testne vožnje</h2>
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -266,23 +375,51 @@ function CarStock() {
                         return (<tr>
                             <td>{parseTime(testDrive.testdrivetime)}</td>
                             <td>{parseStatus(testDrive.testdriveconcluded)}</td>
-                            <td>{testDrive.korisnik}</td>
-                            <td><Button variant="warning" href={"/testdrive/" + testDrive.testdriveid}>Uredi</Button>
-                                <Button variant="danger">Obriši</Button></td>
-                        </tr>)
+                            <td>{users.length !== 0 ? parseUser(testDrive.userid) : ""}</td>
+                            <td><Button variant="warning" href={"/testdrives/" + testDrive.testdriveid} className="me-2">Uredi</Button>
+                                <Button variant="danger" onClick={() => deleteTestDrive(testDrive.testdriveid)}>Obriši</Button></td>
+                        </tr>
+                        )
                     })}
-                    <tr>
-                        <td>Crvena</td>
-                        <td>VOLK TE37 19in</td>
-                        <td>30000</td>
-                        <td><Button variant="warning" className="me-2">Uredi</Button>
-                            <Button variant="danger">Obriši</Button></td>
-
-                    </tr>
                 </tbody>
             </Table>
-            <Button href="/testdrive/new">Add new test drive</Button>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Dodavanje nove testne vožnje</Modal.Title>
+                    {alertTD ? <><Alert key="danger" variant="danger">
+                        Potrebno je unijeti oba polja!
+                    </Alert></> : <></>}
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group controlId="testdrivetime">
+                        <Form.Label>Odaberite datum vožnje</Form.Label>
+                        <Form.Control type="datetime-local" name="testdrivetime" placeholder="Datum vožnje"
+                            value={newTestDrive.testdrivetime} onChange={e => onChangeTestDrive(e)} />
+                    </Form.Group>
+                    <br />
+                    <Form.Text id="passwordHelpBlock" muted>
+                        Potrebno je unijeti oba polja.
+                    </Form.Text>
+                    <Form.Select aria-label="model" name="username" onChange={e => onChangeTestDrive(e)}>
+                        <option>Odaberite korisnika</option>
+                        {Object.values(users).map((user) => {
+                            return (<option>{user.username} {user.usersurname}</option>)
+                        })}
+                    </Form.Select>
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Zatvori
+                    </Button>
+                    <Button variant="success" onClick={() => addNewTestDrive()}>
+                        Spremi promjene
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Button onClick={handleShow}>Dodaj novu testnu vožnju</Button>
         </div>
+
     </>)
 }
 
