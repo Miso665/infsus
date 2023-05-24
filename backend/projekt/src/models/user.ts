@@ -30,9 +30,10 @@ export class UserDTO {
             isValid = false;
             wrongAttributes.push("usersurname");
         }
+
     
         if (user.oib) {
-            if (user.oib.length !== 11 || !/^\d+$/.test(user.oib) || dbCheckOIBExists(user.oib) ) {
+            if (user.oib.length !== 11 || !/^\d+$/.test(user.oib) || await dbCheckOIBExists(user.oib) ) {
                 isValid = false;
                 wrongAttributes.push("oib");
             }

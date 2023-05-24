@@ -77,10 +77,10 @@ export async function dbGetAllUsers(): Promise<UserDTO[]> {
 }
 
 export async function dbCheckOIBExists(OIB: string): Promise<boolean> {
-    const query = "SELECT COUNT(*) FROM Users WHERE OIB = $1;";
+    const query = "SELECT * FROM Users WHERE OIB = $1;";
     try {
         const result: QueryResult<{ count: number }> = await db.query(query, [OIB]);
-        return result.rows[0].count > 0;
+        return result.rows.length > 0;
     } catch (error) {
         console.error("Error checking OIB existence:", error);
         return false;
