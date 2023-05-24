@@ -10,7 +10,7 @@ function AddUser() {
     const [user, setUser] = useState({
         username: null,
         usersurname: null,
-        useroib: null,
+        oib: null,
         roleid: null
     })
     const [invalidInputs, setInvalidInputs] = useState(null)
@@ -18,6 +18,7 @@ function AddUser() {
     let [roles, setRoles] = useState([])
 
     const addNewUser = async () => {
+        console.log(user)
         try {
             const response = await fetch("http://localhost:8080/api/users",
                 {
@@ -130,11 +131,11 @@ function AddUser() {
                 <InputGroup.Text id="basic-addon1">OIB korisnika</InputGroup.Text>
                 <Form.Control
                     placeholder="OIB"
-                    aria-label="useroib"
-                    name="useroib"
+                    aria-label="oib"
+                    name="oib"
                     aria-describedby="basic-addon1"
                     onChange={e => onChange(e)}
-                    value={user.useroib}
+                    value={user.oib}
                 />
             </InputGroup>
             <Button variant="primary" onClick={() => addNewUser()}>Dodaj novog korisnika</Button>
